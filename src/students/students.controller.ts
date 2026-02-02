@@ -1,33 +1,45 @@
-import { Controller, Get, Post, Body, Delete, Param } from '@nestjs/common'
-import { StudentsService } from './students.service'
-import { Student } from './students.schema'
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Param,
+  Body,
+} from '@nestjs/common';
+import { StudentsService } from './students.service';
+import { UpdateStatusDto } from './dto/update-status.dto';
+import { Student } from './students.schema';
 
 @Controller('students')
 export class StudentsController {
   constructor(private readonly studentsService: StudentsService) {}
 
-  // REGISTER siswa
-  @Post()
-  create(@Body() body: { nis: string; name: string; class: string; email: string; password: string }): Promise<Student> {
-    return this.studentsService.create(body)
-  }
-
-  // LOGIN siswa
-  @Post('login')
-  async login(@Body() body: { email: string; password: string }) {
-    const { email, password } = body
-    return this.studentsService.login(email, password)
-  }
-
-  // GET ALL siswa
   @Get()
   findAll(): Promise<Student[]> {
-    return this.studentsService.findAll()
+    return this.studentsService.findAll();
   }
 
-  // DELETE siswa
+  @Post()
+  create(@Body() body: Partial<Student>) {
+    return this.studentsService.create(body);
+  }
+
+  @Patch('attendance/:nis')
+  updateAttendance(
+    @Param('nis') nis: string,
+    @Body() body: UpdateStatusDto,
+  ) {
+    return this.studentsService.updateStatus(nis, body.status);
+  }
+
+  @Patch('reset/:nis')
+  resetAttendance(@Param('nis') nis: string) {
+    return this.studentsService.resetStatus(nis);
+  }
+
   @Delete(':nis')
   delete(@Param('nis') nis: string) {
-    return this.studentsService.deleteByNis(nis)
+    return this.studentsService.deleteByNis(nis);
   }
 }

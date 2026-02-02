@@ -14,14 +14,36 @@ export class Student {
   @Prop({ required: true })
   class: string
 
-  @Prop({ required: true })
-  email: string // tambahkan email untuk login
+  @Prop({ required: true, unique: true })
+  email: string
 
   @Prop({ required: true })
-  password: string // password hash
+  password: string
 
   @Prop({ default: 'student' })
   role: string
+
+  @Prop({ default: '' })
+  status: string
+
+  @Prop({ default: '' })
+  photo: string  // 🔥 TAMBAHAN UNTUK FOTO
+
+  @Prop({
+    type: [
+      {
+        date: Date,
+        status: String,
+        method: String,
+      },
+    ],
+    default: [],
+  })
+  attendanceHistory: {
+    date: Date
+    status: string
+    method: string
+  }[]
 }
 
 export const StudentSchema = SchemaFactory.createForClass(Student)

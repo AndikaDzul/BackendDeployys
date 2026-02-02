@@ -1,20 +1,17 @@
-import { Controller, Get, Post, Body, Query } from '@nestjs/common'
-import { SchedulesService } from './schedules.service'
+import { Controller, Get, Post, Body } from '@nestjs/common';
+import { SchedulesService } from './schedules.service';
 
-@Controller('schedules')
+@Controller('schedule')
 export class SchedulesController {
   constructor(private readonly schedulesService: SchedulesService) {}
 
-  // ✅ GET jadwal by mapel
   @Get()
-  getByMapel(@Query('mapel') mapel: string) {
-    if (!mapel) return []
-    return this.schedulesService.findByMapel(mapel)
+  findAll() {
+    return this.schedulesService.findAll();
   }
 
-  // ✅ POST jadwal (INI YANG KAMU BUTUHKAN)
   @Post()
   create(@Body() body: any) {
-    return this.schedulesService.create(body)
+    return this.schedulesService.create(body);
   }
 }

@@ -1,22 +1,18 @@
-import { Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/mongoose'
-import { Model } from 'mongoose'
-import { Schedule } from './schedule.schema'
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Schedule, ScheduleDocument } from './schedule.schema';
 
 @Injectable()
 export class SchedulesService {
-  constructor(
-    @InjectModel(Schedule.name)
-    private scheduleModel: Model<Schedule>,
-  ) {}
+  constructor(@InjectModel(Schedule.name) private scheduleModel: Model<ScheduleDocument>) {}
 
-  async create(data: any) {
-    return await this.scheduleModel.create(data)
+  async findAll(): Promise<Schedule[]> {
+    return this.scheduleModel.find().exec();
   }
 
-  async findByMapel(mapel: string) {
-    return await this.scheduleModel.find({
-      mapel: { $regex: mapel, $options: 'i' },
-    })
+  async create(data: Partial<Schedule>) {
+    const schedule = new this.scheduleModel(data);
+    return schedule.save();
   }
 }
