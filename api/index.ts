@@ -1,26 +1,23 @@
-// api/index.ts
+import { NestFactory } from '@nestjs/core';
+import { ExpressAdapter } from '@nestjs/platform-express';
+import { AppModule } from '../src/app.module';
 import express from 'express';
-import mongoose from 'mongoose';
-import cors from 'cors';
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+// Inisialisasi Express
+const server = express();
 
-// Koneksi Database dengan penanganan error
-const connectDB = async () => {
-  if (mongoose.connection.readyState >= 1) return;
-  return mongoose.connect(process.env.MONGODB_URI as string);
+export const createNextServer = async (expressInstance) => {
+  const app = await NestFactory.create(
+    AppModule,
+    new ExpressAdapter(expressInstance),
+  );
+  
+  app.enableCors();
+  // PENTING: Jangan gunakan app.listen()
+  await app.init();
 };
 
-app.get('/api/test', async (req, res) => {
-  try {
-    await connectDB();
-    res.json({ message: "Backend Connected & Database Live!" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+createNextServer(server);
 
-// WAJIB: Export sebagai default
-export default app;
+// Export server untuk digunakan Vercel
+export default server;
