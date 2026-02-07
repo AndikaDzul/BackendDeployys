@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
@@ -42,10 +42,11 @@ export class StudentsService {
     const student = await this.studentModel.findOne({ email });
     if (!student) throw new NotFoundException('Email tidak ditemukan');
     const match = await bcrypt.compare(password, student.password);
-    if (!match) throw new Error('Password salah');
+    if (!match) throw new BadRequestException('Password salah');
     return student;
   }
 
+  // ================= ABSEN SISWA =================
   async markAttendance(
     nis: string,
     attendance: {
@@ -60,6 +61,11 @@ export class StudentsService {
       jam?: string;
     }
   ): Promise<StudentDocument> {
+    // Validasi QR guru
+    if (!attendance.teacherToken || !attendance.teacherToken.startsWith('ABSENSI-GURU-')) {
+      throw new BadRequestException('QR Code Guru Tidak Valid');
+    }
+
     const student = await this.findOne(nis);
     student.status = 'Hadir';
     student.attendanceHistory.push(attendance);

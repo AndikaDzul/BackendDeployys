@@ -28,9 +28,9 @@ export class Student {
     day: string;
     date: Date;
     status: string;
-    method: string;
+    method: string;        // misal "QR"
     timestamp: Date;
-    teacherToken?: string;
+    teacherToken?: string; // token QR guru
     mapel?: string;
     guru?: string;
     jam?: string;

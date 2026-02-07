@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Delete, Param, Body, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Param, Body } from '@nestjs/common';
 import { StudentsService } from './students.service';
 
 interface AttendanceDto {
@@ -49,18 +49,17 @@ export class StudentsController {
   }
 
   // ================= ABSEN SISWA =================
- @Post('mark/:nis')
-async markAttendance(
-  @Param('nis') nis: string,
-  @Body() attendance: AttendanceDto
-) {
-  return this.service.markAttendance(nis, {
-    ...attendance,
-    date: new Date(attendance.date),
-    timestamp: new Date(attendance.timestamp),
-  });
-}
-
+  @Post('mark/:nis')
+  async markAttendance(
+    @Param('nis') nis: string,
+    @Body() attendance: AttendanceDto
+  ) {
+    return this.service.markAttendance(nis, {
+      ...attendance,
+      date: new Date(attendance.date),
+      timestamp: new Date(attendance.timestamp),
+    });
+  }
 
   // ================= LOGIN SISWA =================
   @Post('login')
